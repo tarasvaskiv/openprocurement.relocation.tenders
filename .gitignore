@@ -38,12 +38,17 @@ pip-delete-this-directory.txt
 htmlcov/
 .tox/
 .coverage
-.coverage.*
 .cache
 nosetests.xml
 coverage.xml
 *,cover
+cover/
 .hypothesis/
+
+# Buildout
+bin/
+.mr.developer.cfg
+src/
 
 # Translations
 *.mo
