@@ -30,7 +30,7 @@ entry_points = {
 setup(name='openprocurement.relocation.tenders',
       version=version,
       description="",
-      long_description=open("README.rst").read(),
+      long_description=open("README.md").read(),
       classifiers=[
         "Framework :: Pylons",
         "License :: OSI Approved :: Apache Software License",
