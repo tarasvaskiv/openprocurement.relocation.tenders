@@ -3,16 +3,16 @@ from openprocurement.api.utils import (
     json_view,
     opresource,
     APIResource,
-    save_tender,
     ROUTE_PREFIX,
     context_unpack
 )
+from openprocurement.tender.core.utils import save_tender, optendersresource
 from openprocurement.relocation.core.utils import change_ownership
 from openprocurement.relocation.core.validation import validate_ownership_data
 from openprocurement.relocation.tenders.validation import validate_tender_accreditation_level
 
 
-@opresource(name='Tender ownership',
+@optendersresource(name='Tender ownership',
             path='/tenders/{tender_id}/ownership',
             description="Tenders Ownership")
 class TenderResource(APIResource):
@@ -22,7 +22,7 @@ class TenderResource(APIResource):
                            validate_ownership_data,))
     def post(self):
         tender = self.request.validated['tender']
-        location = self.request.route_path('Tender', tender_id=tender.id)
+        location = self.request.route_path('{}:Tender'.format(tender['procurementMethodType']), tender_id=tender.id)
         location = location[len(ROUTE_PREFIX):]  # strips /api/<version>
 
         if change_ownership(self.request, location) and save_tender(self.request):

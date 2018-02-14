@@ -48,6 +48,7 @@ class BidOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMixin):
             {"data": {'value': {'amount': self.initial_bid['value']['amount']*random.random()}}}, status="*")
 
 
+@unittest.skipIf(test_ua_tender_data == None, 'Skip above ua tests')
 class OpenUABidOwnershipChangeTest(OpenUAOwnershipWebTest, BidOwnershipChangeTest):
     initial_tender_data = test_ua_tender_data
     initial_bid = test_ua_bid_data
@@ -57,11 +58,13 @@ class OpenUABidOwnershipChangeTest(OpenUAOwnershipWebTest, BidOwnershipChangeTes
     invalid_owner = 'broker2'
 
 
+@unittest.skipIf(test_uadefense_tender_data == None, 'Skip above ua defense tests')
 class OpenUADefenseBidOwnershipChangeTest(OpenUABidOwnershipChangeTest):
     initial_tender_data = test_uadefense_tender_data
     initial_bid = test_uadefense_bid_data
 
 
+@unittest.skipIf(test_eu_tender_data == None, 'Skip above eu tests')
 class OpenEUBidOwnershipChangeTest(OpenEUOwnershipWebTest, OpenUABidOwnershipChangeTest):
     initial_tender_data = test_eu_tender_data
     initial_bid = test_eu_bid_data

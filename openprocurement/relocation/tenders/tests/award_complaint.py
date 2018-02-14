@@ -18,7 +18,8 @@ from openprocurement.relocation.tenders.tests.base import (
     test_ua_bid_data,
     test_uadefense_bid_data,
     test_eu_bid_data,
-    test_organization
+    test_organization,
+    skipNegotiation
 )
 
 class AwardComplaintOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMixin):
@@ -75,6 +76,7 @@ class AwardComplaintOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMix
         self.request_path = '/{}/{}/awards/{}/complaints/{}'.format(self.resource, self.tender_id, self.award_id, self.complaint_id)
 
 
+@unittest.skipIf(test_ua_tender_data == None, 'Skip above ua tests')
 class OpenUAAwardComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, AwardComplaintOwnershipChangeTest):
     initial_tender_data = test_ua_tender_data
     initial_bid = test_ua_bid_data
@@ -84,11 +86,13 @@ class OpenUAAwardComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, AwardCompl
     invalid_owner = 'broker2'
 
 
+@unittest.skipIf(test_uadefense_tender_data == None, 'Skip above ua defense tests')
 class OpenUADefenseAwardComplaintOwnershipChangeTest(OpenUAAwardComplaintOwnershipChangeTest):
     initial_tender_data = test_uadefense_tender_data
     initial_bid = test_uadefense_bid_data
 
 
+@unittest.skipIf(test_eu_tender_data == None, 'Skip above eu tests')
 class OpenEUAwardComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, OpenUAAwardComplaintOwnershipChangeTest):
     initial_tender_data = test_eu_tender_data
     initial_bid = test_eu_bid_data
@@ -161,7 +165,7 @@ class OpenEUAwardComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, OpenUAAwar
         self.request_path = '/{}/{}/awards/{}/complaints/{}'.format(self.resource, self.tender_id, self.award_id, self.complaint_id)
 
 
-
+@unittest.skipIf(skipNegotiation, 'Skip negotiation tests')
 class NegotiationAwardComplaintOwnershipChangeTest(OpenUAAwardComplaintOwnershipChangeTest):
     initial_tender_data = test_tender_negotiation_data
 
@@ -190,8 +194,7 @@ class NegotiationAwardComplaintOwnershipChangeTest(OpenUAAwardComplaintOwnership
         self.request_path = '/{}/{}/awards/{}/complaints/{}'.format(self.resource, self.tender_id, self.award_id, self.complaint_id)
 
 
-
-
+@unittest.skipIf(skipNegotiation, 'Skip negotiation tests')
 class NegotiationQuickAwardComplaintOwnershipChangeTest(NegotiationAwardComplaintOwnershipChangeTest):
     initial_tender_data = test_tender_negotiation_quick_data
 

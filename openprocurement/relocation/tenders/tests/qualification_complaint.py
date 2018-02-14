@@ -12,6 +12,8 @@ from openprocurement.relocation.tenders.tests.base import (
     test_organization
 )
 
+
+@unittest.skipIf(test_eu_tender_data == None, 'Skip above eu tests')
 class QualificationComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, OwnershipChangeTestMixin):
     initial_tender_data = test_eu_tender_data
     initial_bid = test_eu_bid_data

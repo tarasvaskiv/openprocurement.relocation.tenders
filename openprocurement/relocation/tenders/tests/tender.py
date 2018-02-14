@@ -13,7 +13,8 @@ from openprocurement.relocation.tenders.tests.base import (
     test_eu_tender_data,
     test_tender_reporting_data,
     test_tender_negotiation_data,
-    test_tender_negotiation_quick_data
+    test_tender_negotiation_quick_data,
+    skipNegotiation
 )
 
 
@@ -36,6 +37,7 @@ class TenderOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMixin):
             {"data": {'description': "Check permission {}".format(random.random())}}, status="*")
 
 
+@unittest.skipIf(test_ua_tender_data == None, 'Skip above ua tests')
 class OpenUATenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderOwnershipChangeTest):
     initial_tender_data = test_ua_tender_data
     second_owner = 'broker3'
@@ -43,10 +45,12 @@ class OpenUATenderOwnershipChangeTest(OpenUAOwnershipWebTest, TenderOwnershipCha
     invalid_owner = 'broker1'
 
 
+@unittest.skipIf(test_uadefense_tender_data == None, 'Skip above ua defense tests')
 class OpenUADefenseTenderOwnershipChangeTest(OpenUATenderOwnershipChangeTest):
     initial_tender_data = test_uadefense_tender_data
 
 
+@unittest.skipIf(test_eu_tender_data == None, 'Skip above eu tests')
 class OpenEUTenderOwnershipChangeTest(OpenEUOwnershipWebTest, OpenUATenderOwnershipChangeTest):
     initial_tender_data = test_eu_tender_data
 
@@ -58,6 +62,7 @@ class ReportingTenderOwnershipChangeTest(TenderOwnershipChangeTest):
     invalid_owner = 'broker3'
 
 
+@unittest.skipIf(skipNegotiation, 'Skip negotiation tests')
 class NegotiationTenderOwnershipChangeTest(TenderOwnershipChangeTest):
     initial_tender_data = test_tender_negotiation_data
     second_owner = 'broker3'
@@ -65,6 +70,7 @@ class NegotiationTenderOwnershipChangeTest(TenderOwnershipChangeTest):
     invalid_owner = 'broker1'
 
 
+@unittest.skipIf(skipNegotiation, 'Skip negotiation tests')
 class NegotiationQuickTenderOwnershipChangeTest(NegotiationTenderOwnershipChangeTest):
     initial_tender_data = test_tender_negotiation_quick_data
 

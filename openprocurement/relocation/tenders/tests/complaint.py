@@ -48,6 +48,7 @@ class ComplaintOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMixin):
 
 
 
+@unittest.skipIf(test_ua_tender_data == None, 'Skip above ua tests')
 class OpenUAComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, ComplaintOwnershipChangeTest):
     initial_tender_data = test_ua_tender_data
 
@@ -56,10 +57,12 @@ class OpenUAComplaintOwnershipChangeTest(OpenUAOwnershipWebTest, ComplaintOwners
     invalid_owner = 'broker2'
 
 
+@unittest.skipIf(test_uadefense_tender_data == None, 'Skip above ua defense tests')
 class OpenUADefenseComplaintOwnershipChangeTest(OpenUAComplaintOwnershipChangeTest):
     initial_tender_data = test_uadefense_tender_data
 
 
+@unittest.skipIf(test_eu_tender_data == None, 'Skip above eu tests')
 class OpenEUComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, OpenUAComplaintOwnershipChangeTest):
     initial_tender_data = test_eu_tender_data
 

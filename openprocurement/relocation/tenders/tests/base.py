@@ -6,16 +6,27 @@ from datetime import datetime, timedelta
 from openprocurement.relocation.core.tests.base import BaseWebTest, now
 
 from openprocurement.api.utils import apply_data_patch
-from openprocurement.api.tests.base import test_organization, test_tender_data
-from openprocurement.tender.openua.tests.base import test_tender_data as test_ua_tender_data
-from openprocurement.tender.openuadefense.tests.base import test_tender_data as test_uadefense_tender_data
-from openprocurement.tender.openeu.tests.base import test_tender_data as test_eu_tender_data
+from openprocurement.tender.belowthreshold.tests.base import test_organization, test_tender_data
+try:
+    from openprocurement.tender.openua.tests.base import test_tender_data as test_ua_tender_data
+except ImportError:
+    test_ua_tender_data = None
+try:
+    from openprocurement.tender.openuadefense.tests.base import test_tender_data as test_uadefense_tender_data
+except ImportError:
+    test_uadefense_tender_data = None
+try:
+    from openprocurement.tender.openeu.tests.base import test_tender_data as test_eu_tender_data
+except ImportError:
+    test_eu_tender_data = None
+
 from openprocurement.tender.limited.tests.base import (test_tender_data as test_tender_reporting_data,
                                                        test_tender_negotiation_data,
-                                                       test_tender_negotiation_quick_data)
+                                                       test_tender_negotiation_quick_data,
+                                                       skipNegotiation)
 
 
-test_bid_data = {'tenderers': [test_organization], "value": {"amount": 500}}
+test_bid_data = {'tenderers': [test_organization], "value": {"amount": 500, 'valueAddedTaxIncluded': False}}
 test_ua_bid_data = deepcopy(test_bid_data)
 test_ua_bid_data.update({'selfEligible': True, 'selfQualified': True})
 test_uadefense_bid_data = deepcopy(test_ua_bid_data)
