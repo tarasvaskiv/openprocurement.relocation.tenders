@@ -3,8 +3,6 @@ import unittest
 import random
 
 from openprocurement.relocation.core.tests.mixins import OwnershipChangeTestMixin
-from openprocurement.relocation.core.tests.base import test_transfer_data
-
 from openprocurement.relocation.tenders.tests.base import (
     OwnershipWebTest,
     OpenUAOwnershipWebTest,
@@ -26,7 +24,8 @@ class ComplaintOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMixin):
     invalid_owner = 'broker4'
     initial_auth = ('Basic', (first_owner, ''))
 
-    def prepare_ownership_change(self):
+    def setUp(self):
+        super(ComplaintOwnershipChangeTest, self).setUp()
         self.set_tendering_status()
 
         self.initial_data =  {'title': 'complaint title', 'description': 'complaint description',
@@ -39,7 +38,7 @@ class ComplaintOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMixin):
 
         self.complaint_id = response.json['data']['id']
         self.transfer = self.complaint_transfer = response.json['access']['transfer']
-        self.first_owner_token = self.complaint_token = response.json['access']['token']
+        self.first_owner_token = self.complaint_token = self.acc_token = response.json['access']['token']
         self.request_path = '/{}/{}/complaints/{}'.format(self.resource, self.tender_id, self.complaint_id)
 
     def check_permission(self, path, token):

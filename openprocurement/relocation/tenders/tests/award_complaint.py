@@ -3,7 +3,6 @@ import unittest
 import random
 
 from openprocurement.relocation.core.tests.mixins import OwnershipChangeTestMixin
-from openprocurement.relocation.core.tests.base import test_transfer_data
 from openprocurement.relocation.tenders.tests.base import (
     OwnershipWebTest,
     OpenUAOwnershipWebTest,
@@ -22,6 +21,7 @@ from openprocurement.relocation.tenders.tests.base import (
     skipNegotiation
 )
 
+
 class AwardComplaintOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMixin):
     initial_tender_data = test_tender_data
     initial_bid = test_bid_data
@@ -32,11 +32,8 @@ class AwardComplaintOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMix
     invalid_owner = 'broker4'
     initial_auth = ('Basic', (first_owner, ''))
 
-    def check_permission(self, path, token):
-        return self.app.patch_json('{}?acc_token={}'.format(path, token),
-        {"data": {'description': "Check permission {}".format(random.random())}}, status="*")
-
-    def prepare_ownership_change(self):
+    def setUp(self):
+        super(AwardComplaintOwnershipChangeTest, self).setUp()
         self.set_tendering_status()
 
         #broker(tender owner)create bid
@@ -44,7 +41,7 @@ class AwardComplaintOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMix
         self.tender_id), {'data': self.initial_bid})
         self.assertEqual(response.status, '201 Created')
         bid1_id = response.json['data']['id']
-        self.create_token = bid1_token = response.json['access']['token']
+        self.acc_token = bid1_token = response.json['access']['token']
 
         #broker4 create bid
         self.app.authorization = ('Basic', (self.second_owner, ''))
@@ -67,7 +64,7 @@ class AwardComplaintOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMix
         self.app.authorization = ('Basic', (self.first_owner, ''))
 
         response = self.app.post_json('/tenders/{}/awards/{}/complaints?acc_token={}'.format(
-            self.tender_id, self.award_id, self.create_token), {'data': self.initial_data})
+            self.tender_id, self.award_id, self.acc_token), {'data': self.initial_data})
         self.assertEqual(response.status, '201 Created')
 
         self.complaint_id = response.json['data']['id']
@@ -97,7 +94,8 @@ class OpenEUAwardComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, OpenUAAwar
     initial_tender_data = test_eu_tender_data
     initial_bid = test_eu_bid_data
 
-    def prepare_ownership_change(self):
+    def setUp(self):
+        super(OpenEUAwardComplaintOwnershipChangeTest, self).setUp()
         self.set_tendering_status()
 
         #broker(tender owner)create bid
@@ -105,7 +103,7 @@ class OpenEUAwardComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, OpenUAAwar
         self.tender_id), {'data': self.initial_bid})
         self.assertEqual(response.status, '201 Created')
         bid1_id = response.json['data']['id']
-        self.create_token = bid1_token = response.json['access']['token']
+        self.acc_token = bid1_token = response.json['access']['token']
 
         #broker4 create bid
         self.app.authorization = ('Basic', (self.second_owner, ''))
@@ -156,7 +154,7 @@ class OpenEUAwardComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, OpenUAAwar
         self.app.authorization = ('Basic', (self.first_owner, ''))
 
         response = self.app.post_json('/tenders/{}/awards/{}/complaints?acc_token={}'.format(
-            self.tender_id, self.award_id, self.create_token), {'data': self.initial_data})
+            self.tender_id, self.award_id, self.acc_token), {'data': self.initial_data})
         self.assertEqual(response.status, '201 Created')
 
         self.complaint_id = response.json['data']['id']
@@ -169,7 +167,8 @@ class OpenEUAwardComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, OpenUAAwar
 class NegotiationAwardComplaintOwnershipChangeTest(OpenUAAwardComplaintOwnershipChangeTest):
     initial_tender_data = test_tender_negotiation_data
 
-    def prepare_ownership_change(self):
+    def setUp(self):
+        super(NegotiationAwardComplaintOwnershipChangeTest, self).setUp()
         # Create award
         request_path = '/tenders/{}/awards?acc_token={}'.format(self.tender_id, self.tender_token)
         response = self.app.post_json(request_path, {'data': {'suppliers': [test_organization], 'qualified': True,

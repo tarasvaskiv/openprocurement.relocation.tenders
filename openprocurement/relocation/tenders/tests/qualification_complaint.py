@@ -3,8 +3,6 @@ import unittest
 import random
 
 from openprocurement.relocation.core.tests.mixins import OwnershipChangeTestMixin
-from openprocurement.relocation.core.tests.base import test_transfer_data
-
 from openprocurement.relocation.tenders.tests.base import (
     OpenEUOwnershipWebTest,
     test_eu_tender_data,
@@ -24,7 +22,8 @@ class QualificationComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, Ownershi
     invalid_owner = 'broker2'
     initial_auth = ('Basic', (first_owner, ''))
 
-    def prepare_ownership_change(self):
+    def setUp(self):
+        super(QualificationComplaintOwnershipChangeTest, self).setUp()
         self.set_tendering_status()
 
         #broker(tender owner)create bid
@@ -71,8 +70,8 @@ class QualificationComplaintOwnershipChangeTest(OpenEUOwnershipWebTest, Ownershi
         self.initial_data = {'title': 'complaint title', 'description': 'complaint description', 'author': test_organization, 'status': 'draft'}
 
         self.app.authorization = ('Basic', (self.first_owner, ''))
-        self.create_token = bid1_token
-        response = self.app.post_json('/tenders/{}/qualifications/{}/complaints?acc_token={}'.format(self.tender_id, qualification_id, self.create_token),
+        self.acc_token = bid1_token
+        response = self.app.post_json('/tenders/{}/qualifications/{}/complaints?acc_token={}'.format(self.tender_id, qualification_id, self.acc_token),
                                       {'data': self.initial_data})
         self.assertEqual(response.status, '201 Created')
 

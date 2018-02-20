@@ -25,16 +25,14 @@ class TenderOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMixin):
     test_owner = 'broker1t'
     invalid_owner = 'broker3'
     initial_auth = ('Basic', (first_owner, ''))
+    owner_check = True
 
-    def prepare_ownership_change(self):
+    def setUp(self):
+        super(TenderOwnershipChangeTest, self).setUp()
         self.initial_data =  self.initial_tender_data
         self.transfer = self.tender_transfer
-        self.first_owner_token = self.tender_token
+        self.first_owner_token = self.acc_token = self.tender_token
         self.request_path = '/{}/{}'.format(self.resource, self.tender_id)
-
-    def check_permission(self, path, token):
-        return self.app.patch_json('{}?acc_token={}'.format(path, token),
-            {"data": {'description': "Check permission {}".format(random.random())}}, status="*")
 
 
 @unittest.skipIf(test_ua_tender_data == None, 'Skip above ua tests')
@@ -57,9 +55,6 @@ class OpenEUTenderOwnershipChangeTest(OpenEUOwnershipWebTest, OpenUATenderOwners
 
 class ReportingTenderOwnershipChangeTest(TenderOwnershipChangeTest):
     initial_tender_data = test_tender_reporting_data
-    second_owner = 'broker1'
-    test_owner = 'broker1t'
-    invalid_owner = 'broker3'
 
 
 @unittest.skipIf(skipNegotiation, 'Skip negotiation tests')

@@ -2,6 +2,7 @@
 import unittest
 import random
 
+from openprocurement.api.tests.base import snitch
 from openprocurement.relocation.core.tests.mixins import OwnershipChangeTestMixin
 
 from openprocurement.relocation.tenders.tests.base import (
@@ -17,6 +18,7 @@ from openprocurement.relocation.tenders.tests.base import (
     test_uadefense_bid_data,
     test_eu_bid_data
 )
+from openprocurement.relocation.tenders.tests.bid_blanks import change_ownership, change_ownership_invalid
 
 
 class BidOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMixin):
@@ -28,7 +30,8 @@ class BidOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMixin):
     invalid_owner = 'broker4'
     initial_auth = ('Basic', (first_owner, ''))
 
-    def prepare_ownership_change(self):
+    def setUp(self):
+        super(BidOwnershipChangeTest, self).setUp()
         self.set_tendering_status()
 
         self.initial_data =  self.initial_bid
@@ -40,12 +43,11 @@ class BidOwnershipChangeTest(OwnershipWebTest, OwnershipChangeTestMixin):
 
         self.bid_id = response.json['data']['id']
         self.transfer = self.bid_transfer = response.json['access']['transfer']
-        self.first_owner_token = self.bid_token = response.json['access']['token']
+        self.first_owner_token = self.bid_token = self.acc_token = response.json['access']['token']
         self.request_path = '/{}/{}/bids/{}'.format(self.resource, self.tender_id, self.bid_id)
 
-    def check_permission(self, path, token):
-        return self.app.patch_json('{}?acc_token={}'.format(path, token),
-            {"data": {'value': {'amount': self.initial_bid['value']['amount']*random.random()}}}, status="*")
+    test_change_ownership = snitch(change_ownership)
+    test_change_ownership_invalid = snitch(change_ownership_invalid)
 
 
 @unittest.skipIf(test_ua_tender_data == None, 'Skip above ua tests')
